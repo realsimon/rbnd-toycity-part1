@@ -58,8 +58,10 @@ brands.each do |brand|
   # Print the name of the brand
   puts "Brand: \"#{brand}\""
 
-  # Count and print the number of the brand's toys we stock
+  # Select items for each brand
   brand_toys = products_hash["items"].select {|toy| toy["brand"] == brand}
+
+  # Count and print the number of the brand's toys we stock
   puts "#{brand} inventory: #{(brand_toys.map {|toy| toy["stock"]}).reduce(:+)}"
 
   # Calculate and print the average price of the brand's toys
@@ -67,9 +69,15 @@ brands.each do |brand|
 
   # Calculate and print the total revenue of all the brand's toy sales combined
   revenue = 0.0
+
   brand_toys.each do |toy|
-      revenue = revenue + (toy["purchases"].map {|purchase| purchase["price"]}).reduce(:+) + (toy["purchases"].map {|purchase| purchase["shipping"]}).reduce(:+)
+      # revenue = revenue + (toy["purchases"].map {|purchase| purchase["price"]}).reduce(:+)
+
+      # Trying inject method as suggested by reviewer, though I think it's more confusing then map + reduce.
+      revenue = toy["purchases"].inject(revenue) {|revenue, purchase | revenue + purchase["price"]}
   end
+
   puts "#{brand} revenue: #{revenue.round(2)}"
   puts
+
 end
